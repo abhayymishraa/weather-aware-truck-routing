@@ -26,7 +26,7 @@ export function TripForm({ onSubmit, loading }: Props) {
   const [load, setLoad] = useState(String(DEFAULT_LOAD_LB))
   const [interval, setInterval] = useState<Interval>(DEFAULT_INTERVAL)
 
-  const now = new Date()
+  const [now] = useState(() => Date.now())
   const loadValue = Number(load)
   const loadValid = Number.isInteger(loadValue) && loadValue >= 1 && loadValue <= MAX_LOAD_LB
   const canSubmit = origin && destination && departure && loadValid && !loading
@@ -55,8 +55,8 @@ export function TripForm({ onSubmit, loading }: Props) {
         slotProps={{
           inputLabel: { shrink: true },
           htmlInput: {
-            min: toLocalInputValue(new Date(now.getTime() - DEPARTURE_GRACE_MS)),
-            max: toLocalInputValue(new Date(now.getTime() + FORECAST_HOURS * 3_600_000)),
+            min: toLocalInputValue(new Date(now - DEPARTURE_GRACE_MS)),
+            max: toLocalInputValue(new Date(now + FORECAST_HOURS * 3_600_000)),
           },
         }}
         required

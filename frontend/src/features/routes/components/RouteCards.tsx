@@ -1,7 +1,7 @@
 import type { Route } from '../../../types/plan'
 import { RouteCard } from './RouteCard'
 
-export function routeLetter(id: number): string {
+function routeLetter(id: number): string {
   return String.fromCharCode(65 + id)
 }
 
