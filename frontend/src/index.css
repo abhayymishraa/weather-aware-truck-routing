@@ -1,0 +1,8 @@
+@layer theme, base, mui, components, utilities;
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+}
