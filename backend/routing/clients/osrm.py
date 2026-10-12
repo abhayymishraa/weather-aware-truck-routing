@@ -26,15 +26,21 @@ def fetch_routes(origin: LatLon, destination: LatLon, wanted: int = 3) -> list[R
         return http.request_json("GET", url, params=params, bad_request_error=http.NoRouteError)
 
     data = cache.get_or_set(http.cache_key("osrm", url, params), load, CACHE_S)
-    return [
-        RawRoute(
-            coords=[(lat, lon) for lon, lat in route["geometry"]["coordinates"]],
-            cum_time_s=list(
-                itertools.accumulate(route["legs"][0]["annotation"]["duration"], initial=0.0)
-            ),
-            distance_mi=route["distance"] / METERS_PER_MILE,
-            duration_s=route["duration"],
-            source="osrm",
-        )
-        for route in data["routes"][:wanted]
-    ]
+    try:
+        routes = [
+            RawRoute(
+                coords=[(lat, lon) for lon, lat in route["geometry"]["coordinates"]],
+                cum_time_s=list(
+                    itertools.accumulate(route["legs"][0]["annotation"]["duration"], initial=0.0)
+                ),
+                distance_mi=route["distance"] / METERS_PER_MILE,
+                duration_s=route["duration"],
+                source="osrm",
+            )
+            for route in data["routes"][:wanted]
+        ]
+    except (KeyError, IndexError, TypeError, ValueError) as exc:
+        raise http.UpstreamError() from exc
+    if not routes:
+        raise http.NoRouteError()
+    return routes

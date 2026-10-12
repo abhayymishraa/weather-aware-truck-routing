@@ -39,7 +39,13 @@ def fetch_routes(
 
     def load() -> list[RawRoute]:
         data = http.request_json("GET", url, params={"key": settings.TOMTOM_API_KEY, **params})
-        return [_parse(route) for route in data["routes"][:wanted]]
+        try:
+            routes = [_parse(route) for route in data["routes"][:wanted]]
+        except (KeyError, IndexError, TypeError, ValueError) as exc:
+            raise http.UpstreamError() from exc
+        if not routes:
+            raise http.UpstreamError()
+        return routes
 
     return cache.get_or_set(http.cache_key("tomtom", url, params), load, CACHE_S)
 

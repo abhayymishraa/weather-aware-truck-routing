@@ -17,10 +17,20 @@ def exception_handler(exc, context):
     if response is None:
         return None
     if isinstance(exc, ValidationError):
-        response.data = {"detail": "Invalid input.", "code": "invalid", "errors": response.data}
+        response.data = {
+            "detail": _first_message(response.data),
+            "code": "invalid",
+            "errors": response.data,
+        }
     else:
         response.data = {"detail": str(exc.detail), "code": exc.get_codes()}
     return response
+
+
+def _first_message(errors) -> str:
+    while isinstance(errors, dict | list):
+        errors = next(iter(errors.values())) if isinstance(errors, dict) else errors[0]
+    return str(errors)
 
 
 @api_view(["GET"])

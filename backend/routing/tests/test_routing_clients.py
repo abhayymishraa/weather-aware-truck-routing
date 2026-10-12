@@ -136,3 +136,30 @@ def test_osrm_parses_routes(monkeypatch):
     assert route.cum_time_s == [0.0, 500.0, 1200.0]
     assert route.distance_mi == pytest.approx(14.0, abs=0.01)
     assert route.source == "osrm"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"routes": [{"summary": {"lengthInMeters": 1, "travelTimeInSeconds": 1}, "legs": []}]},
+        {"routes": [tomtom_route([(0, 0), (0.2, 0)]) | {"progress": []}]},
+        {"error": "unexpected"},
+        {"routes": []},
+    ],
+)
+def test_tomtom_unexpected_shape_is_upstream_error(monkeypatch, clock, body):
+    monkeypatch.setattr(http, "request_json", lambda *a, **k: body)
+    with pytest.raises(http.UpstreamError):
+        tomtom.fetch_routes(A, B, NOW, 1)
+
+
+def test_osrm_unexpected_shape_is_upstream_error(monkeypatch):
+    monkeypatch.setattr(http, "request_json", lambda *a, **k: {"routes": [{"distance": 1}]})
+    with pytest.raises(http.UpstreamError):
+        osrm.fetch_routes(A, B)
+
+
+def test_osrm_without_routes_is_no_route(monkeypatch):
+    monkeypatch.setattr(http, "request_json", lambda *a, **k: {"routes": []})
+    with pytest.raises(http.NoRouteError):
+        osrm.fetch_routes(A, B)

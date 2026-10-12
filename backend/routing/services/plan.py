@@ -18,6 +18,9 @@ from .risk import (
 from .types import LatLon, RawRoute
 
 WANTED_ROUTES = 3
+# ponytail: Open-Meteo free tier allows 600 location-calls per minute; one plan stays under it.
+MAX_WEATHER_CELLS = 500
+CORRIDOR_OPTIONS = ((10, 15), (10, 0), (20, 0))
 
 
 def build_plan(
@@ -39,8 +42,8 @@ def build_plan(
 
     start = int(now.timestamp()) // 3600 * 3600
     sampled = [sample_checkpoints(r.coords, r.cum_time_s, interval_mi) for r in raws]
-    corridor = {snap(*p) for r in raws for p in corridor_points(r.coords)}
     checkpoint_cells = {snap(c.lat, c.lon) for cps in sampled for c in cps}
+    corridor = _corridor(raws, checkpoint_cells)
     weather = open_meteo.fetch_hourly(sorted(corridor | checkpoint_cells), start)
 
     routes = []
@@ -104,6 +107,14 @@ def build_plan(
         "heatmap": {"start_hour": datetime.fromtimestamp(start, UTC).isoformat(), "cells": cells},
         "warnings": warnings,
     }
+
+
+def _corridor(raws: list[RawRoute], checkpoint_cells: set) -> set:
+    for step_mi, offset_mi in CORRIDOR_OPTIONS:
+        corridor = {snap(*p) for r in raws for p in corridor_points(r.coords, step_mi, offset_mi)}
+        if len(corridor | checkpoint_cells) <= MAX_WEATHER_CELLS:
+            break
+    return corridor
 
 
 def _level(values: tuple, load_lb: int) -> Level | None:

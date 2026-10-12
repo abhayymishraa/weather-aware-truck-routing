@@ -144,3 +144,25 @@ def test_falls_back_to_osrm(monkeypatch, calm):
     result = build()
     assert result["warnings"][:2] == ["fallback_routing", "fewer_routes"]
     assert result["routes"][0]["source"] == "osrm"
+
+
+def test_long_trip_stays_within_weather_cell_budget(monkeypatch):
+    seen = {}
+
+    def fake(cells, start):
+        seen["cells"] = len(cells)
+        return {cell: weather() for cell in cells}
+
+    monkeypatch.setattr(open_meteo, "fetch_hourly", fake)
+    monkeypatch.setattr(
+        tomtom, "fetch_routes", lambda *a: [route(3000, 46.0), route(3010, 46.5), route(3020, 47.0)]
+    )
+    result = build()
+    assert seen["cells"] <= plan.MAX_WEATHER_CELLS
+    assert result["heatmap"]["cells"]
+
+
+def test_short_trip_keeps_side_corridor(monkeypatch, calm):
+    monkeypatch.setattr(tomtom, "fetch_routes", lambda *a: [route()])
+    lons = {cell["lon"] for cell in build()["heatmap"]["cells"]}
+    assert len(lons) > 1

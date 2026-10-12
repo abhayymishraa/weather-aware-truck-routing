@@ -84,3 +84,21 @@ def test_plan_upstream_error_shape(monkeypatch):
         "detail": "An outside service did not respond. Try again.",
         "code": "upstream_error",
     }
+
+
+@pytest.mark.parametrize(
+    ("override", "detail"),
+    [
+        (
+            {"destination": {"lat": 32.78, "lon": -96.8}},
+            "Origin and destination must be different places.",
+        ),
+        (
+            {"departure": (timezone.now() + timedelta(hours=49)).isoformat()},
+            "Departure must be within the next 48 hours.",
+        ),
+    ],
+)
+def test_plan_validation_detail_is_readable(override, detail):
+    response = APIClient().post("/api/plan", plan_body(**override), format="json")
+    assert response.json()["detail"] == detail
