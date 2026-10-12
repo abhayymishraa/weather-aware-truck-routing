@@ -38,7 +38,7 @@ export function ForecastSlider({ startHour }: { startHour: string }) {
       >
         {playing ? <PauseRounded /> : <PlayArrowRounded />}
       </IconButton>
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col pr-4">
         <Typography variant="caption" aria-live="polite">
           Forecast {label} (+{hour} h)
         </Typography>

@@ -2,6 +2,7 @@ import { useColorScheme } from '@mui/material/styles'
 import { LngLatBounds } from 'maplibre-gl'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Map, {
+  AttributionControl,
   Layer,
   NavigationControl,
   Source,
@@ -23,6 +24,7 @@ type Props = {
   routes: Route[]
   selectedId: number | null
   onSelect: (id: number) => void
+  bottomInset?: number
   children?: ReactNode
 }
 
@@ -33,7 +35,7 @@ const levelColor = [
   RISK_COLORS.no_data,
 ] as unknown as string
 
-export function RouteMap({ routes, selectedId, onSelect, children }: Props) {
+export function RouteMap({ routes, selectedId, onSelect, bottomInset = 0, children }: Props) {
   const mapRef = useRef<MapRef>(null)
   const { mode, systemMode } = useColorScheme()
   const dark = (mode === 'system' ? systemMode : mode) === 'dark'
@@ -50,8 +52,11 @@ export function RouteMap({ routes, selectedId, onSelect, children }: Props) {
     for (const route of routes) {
       for (const [lon, lat] of route.geometry.coordinates) bounds.extend([lon, lat])
     }
-    mapRef.current?.fitBounds(bounds, { padding: 48, duration: 800 })
-  }, [routes])
+    mapRef.current?.fitBounds(bounds, {
+      padding: { top: 56, right: 56, left: 56, bottom: 48 + bottomInset },
+      duration: 800,
+    })
+  }, [routes, bottomInset])
 
   function handleClick(event: MapLayerMouseEvent) {
     const feature = event.features?.[0]
@@ -73,6 +78,7 @@ export function RouteMap({ routes, selectedId, onSelect, children }: Props) {
       ref={mapRef}
       initialViewState={US_VIEW}
       mapStyle={dark ? MAP_STYLES.dark : MAP_STYLES.light}
+      attributionControl={false}
       interactiveLayerIds={['route-hit', 'checkpoints']}
       onClick={handleClick}
       onMouseEnter={() => setCursor('pointer')}
@@ -81,6 +87,7 @@ export function RouteMap({ routes, selectedId, onSelect, children }: Props) {
       style={{ width: '100%', height: '100%' }}
     >
       <NavigationControl position="top-right" showCompass={false} />
+      <AttributionControl position="top-left" compact />
       {children}
       <Source id="routes" type="geojson" data={routeData}>
         <Layer
@@ -94,7 +101,7 @@ export function RouteMap({ routes, selectedId, onSelect, children }: Props) {
           type="line"
           filter={selectedFilter}
           layout={{ 'line-join': 'round', 'line-cap': 'round' }}
-          paint={{ 'line-color': '#ffffff', 'line-width': 9 }}
+          paint={{ 'line-color': dark ? '#0b0f12' : '#ffffff', 'line-width': 9 }}
         />
         <Layer
           id="route-selected"
