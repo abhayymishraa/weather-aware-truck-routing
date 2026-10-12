@@ -114,12 +114,13 @@ The first route is recommended. Each card names the key that decided its place. 
 - **Grid snap and dedupe.** All checkpoints and corridor points snap to a 0.25° grid (about 17 mi). Dallas to Denver needs 291 weather cells for 2 routes, fetched in batches of 100.
 - **Caches.** Routes are cached for 1 h, each weather cell for 1 h, and geocoding results for 24 h (Redis in production). Measured on Dallas to Denver: 4.8 s on a cold cache, 0.05 s on a warm cache.
 - **Compression.** Caddy gzip reduces the plan response from 448 KB to 122 KB.
-- **Slider.** The forecast slider changes the heatmap layer's `heatmap-weight` paint property. The map does not re-render in React; only the slider label updates.
+- **Slider.** The forecast slider changes the `fill-color` and `fill-opacity` paint properties of the corridor grid layer. The map does not re-render in React; only the slider label updates.
 
 ## Limits
 
 - The TomTom free tier has 20,000 routing requests per month. When TomTom is not available, the app uses OSRM car routes, which ignore truck rules.
 - OSRM, Photon, Open-Meteo, and OpenFreeMap are public services with rate limits.
+- Open-Meteo's free tier allows 600 location calls per minute and 5,000 per hour. One plan uses at most 500 weather cells: long trips drop the side corridor and keep the cells along each route.
 - The forecast covers 48 h. Later checkpoints are No Data.
 - The weather grid is about 17 mi, so very local weather can be missed.
 - The empty truck weight (35,000 lb) is a fixed value.
