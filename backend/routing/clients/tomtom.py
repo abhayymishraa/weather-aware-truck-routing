@@ -5,13 +5,12 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 
-from ..services.geo import cumulative_miles, lerp
+from ..services.geo import METERS_PER_MILE, cumulative_miles, lerp
 from ..services.types import LatLon, RawRoute
 from . import http
 
 URL = "https://api.tomtom.com/routing/1/calculateRoute/{a}:{b}/json"
 CACHE_S = 3600
-METERS_PER_MILE = 1609.344
 KG_PER_LB = 0.45359237
 # ponytail: typical empty tractor-trailer; vehicleWeight is gross weight. Add a form field if users need it.
 EMPTY_TRUCK_LB = 35_000

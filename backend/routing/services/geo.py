@@ -5,6 +5,7 @@ import math
 EARTH_RADIUS_MI = 3958.7613
 MILES_PER_DEG_LAT = 2 * math.pi * EARTH_RADIUS_MI / 360
 GRID_DEG = 0.25
+METERS_PER_MILE = 1609.344
 
 
 def haversine_mi(a: tuple[float, float], b: tuple[float, float]) -> float:

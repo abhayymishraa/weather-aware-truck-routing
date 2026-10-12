@@ -2,11 +2,11 @@ import itertools
 
 from django.core.cache import cache
 
+from ..services.geo import METERS_PER_MILE
 from ..services.types import LatLon, RawRoute
 from . import http
 
 URL = "https://router.project-osrm.org/route/v1/driving/{a};{b}"
-METERS_PER_MILE = 1609.344
 CACHE_S = 3600
 
 

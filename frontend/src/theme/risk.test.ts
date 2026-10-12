@@ -1,13 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { levelFromScore, riskKey, RISK_COLORS, RISK_LABELS } from './risk'
+import { riskKey, RISK_COLORS, RISK_LABELS } from './risk'
 
 describe('risk scale', () => {
-  it('maps scores to keys', () => {
-    expect(levelFromScore(0)).toBe('low')
-    expect(levelFromScore(4)).toBe('no_travel')
-    expect(levelFromScore(-1)).toBe('no_data')
-  })
-
   it('maps null to no_data', () => {
     expect(riskKey(null)).toBe('no_data')
     expect(riskKey('severe')).toBe('severe')

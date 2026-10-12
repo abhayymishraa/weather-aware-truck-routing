@@ -23,7 +23,3 @@ export const RISK_LABELS: Record<RiskKey, string> = {
 export function riskKey(level: LevelName | null): RiskKey {
   return level ?? 'no_data'
 }
-
-export function levelFromScore(score: number): RiskKey {
-  return score < 0 ? 'no_data' : LEVELS[score]
-}
