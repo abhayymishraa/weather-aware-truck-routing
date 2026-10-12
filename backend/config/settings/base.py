@@ -29,3 +29,5 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"plan": "20/min", "geocode": "60/min"},
     "EXCEPTION_HANDLER": "routing.apis.exception_handler",
 }
+
+TOMTOM_API_KEY = os.environ.get("TOMTOM_API_KEY", "")
