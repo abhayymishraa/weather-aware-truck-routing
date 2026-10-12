@@ -1,4 +1,3 @@
-import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRounded'
 import KeyboardArrowUpRounded from '@mui/icons-material/KeyboardArrowUpRounded'
 import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -80,7 +79,9 @@ export function AppShell({ panel, map, overlay, loading, resultKey }: Props) {
             aria-expanded={open}
             sx={{ width: 44, height: 44 }}
           >
-            {open ? <KeyboardArrowDownRounded /> : <KeyboardArrowUpRounded />}
+            <KeyboardArrowUpRounded
+              className={`transition-[rotate] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+            />
           </IconButton>
         </div>
         <div className="flex flex-col gap-4 overflow-y-auto p-4 pt-1">

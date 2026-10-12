@@ -11,6 +11,10 @@ import { HEAT_LAYER_ID, heatColor, heatOpacity } from '../utils/heat'
 
 const MARKS = [0, 12, 24, 36, 47].map((value) => ({ value, label: `+${value}h` }))
 
+const ICON =
+  'col-start-1 row-start-1 transition-[opacity,scale] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:scale-100'
+const HIDDEN = 'scale-75 opacity-0'
+
 export function ForecastSlider({ startHour }: { startHour: string }) {
   const { main } = useMap()
   const [hour, setHour] = useState(0)
@@ -38,7 +42,10 @@ export function ForecastSlider({ startHour }: { startHour: string }) {
         aria-label={playing ? 'Pause forecast' : 'Play forecast'}
         sx={{ width: 44, height: 44 }}
       >
-        {playing ? <PauseRounded /> : <PlayArrowRounded />}
+        <span className="grid">
+          <PauseRounded className={`${ICON} ${playing ? '' : HIDDEN}`} />
+          <PlayArrowRounded className={`${ICON} ${playing ? HIDDEN : ''}`} />
+        </span>
       </IconButton>
       <div className="flex min-w-0 flex-1 flex-col pr-4">
         <Typography variant="caption" aria-live="polite">

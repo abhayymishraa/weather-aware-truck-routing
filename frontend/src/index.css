@@ -21,3 +21,53 @@ body {
     height: 44px;
   }
 }
+
+.maplibregl-popup-content {
+  transition:
+    opacity 150ms,
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @starting-style {
+      transform: none;
+    }
+  }
+}
+
+/* The popup grows from the clicked point, which sits on the anchor side. */
+.maplibregl-popup-anchor-top .maplibregl-popup-content {
+  transform-origin: top;
+}
+
+.maplibregl-popup-anchor-bottom .maplibregl-popup-content {
+  transform-origin: bottom;
+}
+
+.maplibregl-popup-anchor-left .maplibregl-popup-content {
+  transform-origin: left;
+}
+
+.maplibregl-popup-anchor-right .maplibregl-popup-content {
+  transform-origin: right;
+}
+
+.maplibregl-popup-anchor-top-left .maplibregl-popup-content {
+  transform-origin: top left;
+}
+
+.maplibregl-popup-anchor-top-right .maplibregl-popup-content {
+  transform-origin: top right;
+}
+
+.maplibregl-popup-anchor-bottom-left .maplibregl-popup-content {
+  transform-origin: bottom left;
+}
+
+.maplibregl-popup-anchor-bottom-right .maplibregl-popup-content {
+  transform-origin: bottom right;
+}

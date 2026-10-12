@@ -26,7 +26,11 @@ export function App() {
         }
         loading={plan.isPending}
       />
-      {plan.error && <Alert severity="error">{plan.error.message}</Alert>}
+      {plan.error && (
+        <Alert severity="error" className="transition-opacity duration-200 starting:opacity-0">
+          {plan.error.message}
+        </Alert>
+      )}
       {plan.data && <WarningBanner warnings={plan.data.warnings} />}
       {plan.isPending ? (
         <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading routes">
@@ -41,7 +45,10 @@ export function App() {
   )
 
   const overlay = plan.data && (
-    <Paper elevation={3} className="flex flex-col gap-1 p-3">
+    <Paper
+      elevation={3}
+      className="transition-[opacity,translate] ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:starting:translate-y-0 flex flex-col gap-1 p-3 duration-250 starting:translate-y-2 starting:opacity-0"
+    >
       <ForecastSlider
         key={`${plan.data.heatmap.start_hour}-${plan.submittedAt}`}
         startHour={plan.data.heatmap.start_hour}

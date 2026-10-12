@@ -12,7 +12,10 @@ export function RouteCard({ route, letter, selected, onSelect }: Props) {
   return (
     <Card
       variant="outlined"
-      sx={{ borderColor: selected ? 'primary.main' : undefined, borderWidth: selected ? 2 : 1 }}
+      sx={{
+        borderColor: selected ? 'primary.main' : undefined,
+        boxShadow: selected ? (t) => `inset 0 0 0 1px ${t.palette.primary.main}` : undefined,
+      }}
     >
       <CardActionArea onClick={onSelect} aria-pressed={selected} sx={{ p: 2 }}>
         <div className="flex flex-col gap-2">

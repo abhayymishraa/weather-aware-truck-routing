@@ -13,7 +13,12 @@ export function WarningBanner({ warnings }: { warnings: string[] }) {
       {warnings
         .filter((code) => code in MESSAGES)
         .map((code) => (
-          <Alert key={code} severity={MESSAGES[code].severity} variant="outlined">
+          <Alert
+            key={code}
+            severity={MESSAGES[code].severity}
+            variant="outlined"
+            className="transition-opacity duration-200 starting:opacity-0"
+          >
             {MESSAGES[code].text}
           </Alert>
         ))}

@@ -10,14 +10,19 @@ type Props = { routes: Route[]; selectedId: number | null; onSelect: (id: number
 export function RouteCards({ routes, selectedId, onSelect }: Props) {
   return (
     <div className="flex flex-col gap-3">
-      {routes.map((route) => (
-        <RouteCard
+      {routes.map((route, i) => (
+        <div
           key={route.id}
-          route={route}
-          letter={routeLetter(route.id)}
-          selected={route.id === selectedId}
-          onSelect={() => onSelect(route.id)}
-        />
+          className="transition-[opacity,translate] ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:starting:translate-y-0 duration-200 starting:translate-y-1 starting:opacity-0"
+          style={{ transitionDelay: `${i * 50}ms` }}
+        >
+          <RouteCard
+            route={route}
+            letter={routeLetter(route.id)}
+            selected={route.id === selectedId}
+            onSelect={() => onSelect(route.id)}
+          />
+        </div>
       ))}
     </div>
   )
