@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost}
+      TOMTOM_API_KEY: ${TOMTOM_API_KEY:-}
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [redis]
+    restart: unless-stopped
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports: ["80:80", "443:443"]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+    volumes: [caddy_data:/data]
+    depends_on: [backend]
+    restart: unless-stopped
+volumes:
+  caddy_data:
