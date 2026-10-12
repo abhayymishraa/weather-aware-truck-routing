@@ -24,3 +24,7 @@ export function toLocalInputValue(date: Date): string {
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
   return local.toISOString().slice(0, 16)
 }
+
+export function formatReading(value: number | null | undefined, unit: string, digits = 0): string {
+  return value == null ? 'No data' : `${value.toFixed(digits)} ${unit}`
+}

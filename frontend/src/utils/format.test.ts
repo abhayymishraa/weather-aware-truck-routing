@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDuration, formatMiles, toLocalInputValue } from './format'
+import { formatDuration, formatMiles, formatReading, toLocalInputValue } from './format'
 
 describe('format', () => {
   it('formats durations', () => {
@@ -16,5 +16,12 @@ describe('format', () => {
   it('builds a datetime-local value in local time', () => {
     const date = new Date(2026, 9, 12, 7, 5)
     expect(toLocalInputValue(date)).toBe('2026-10-12T07:05')
+  })
+
+  it('formats readings and treats missing values as no data', () => {
+    expect(formatReading(18.4, 'mph')).toBe('18 mph')
+    expect(formatReading(0.123, 'in/hr', 2)).toBe('0.12 in/hr')
+    expect(formatReading(null, 'mph')).toBe('No data')
+    expect(formatReading(undefined, 'mph')).toBe('No data')
   })
 })

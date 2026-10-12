@@ -1,13 +1,9 @@
 import { Popup } from 'react-map-gl/maplibre'
 import { RISK_COLORS, RISK_LABELS } from '../../../theme/risk'
-import { formatTime } from '../../../utils/format'
+import { formatReading, formatTime } from '../../../utils/format'
 import type { CheckpointFeatureProps } from '../utils/to-geojson'
 
 type Props = { checkpoint: CheckpointFeatureProps; onClose: () => void }
-
-function value(n: number | null, unit: string, digits = 0) {
-  return n === null ? 'No data' : `${n.toFixed(digits)} ${unit}`
-}
 
 export function CheckpointPopup({ checkpoint, onClose }: Props) {
   return (
@@ -28,10 +24,10 @@ export function CheckpointPopup({ checkpoint, onClose }: Props) {
         </div>
         <div>ETA {formatTime(checkpoint.eta)}</div>
         <div>
-          Wind {value(checkpoint.wind_mph, 'mph')} (gust {value(checkpoint.gust_mph, 'mph')})
+          Wind {formatReading(checkpoint.wind_mph, 'mph')} (gust {formatReading(checkpoint.gust_mph, 'mph')})
         </div>
-        <div>Rain {value(checkpoint.rain_in_hr, 'in/hr', 2)}</div>
-        <div>Snow {value(checkpoint.snow_in_hr, 'in/hr', 2)}</div>
+        <div>Rain {formatReading(checkpoint.rain_in_hr, 'in/hr', 2)}</div>
+        <div>Snow {formatReading(checkpoint.snow_in_hr, 'in/hr', 2)}</div>
       </div>
     </Popup>
   )

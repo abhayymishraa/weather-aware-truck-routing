@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { useMap } from 'react-map-gl/maplibre'
 import { FORECAST_HOURS } from '../../../config/constants'
 import { formatTime } from '../../../utils/format'
-import { HEAT_LAYER_ID, heatWeight } from '../utils/heat'
+import { HEAT_LAYER_ID, heatColor, heatOpacity } from '../utils/heat'
 
 const MARKS = [0, 12, 24, 36, 47].map((value) => ({ value, label: `+${value}h` }))
 
@@ -18,7 +18,9 @@ export function ForecastSlider({ startHour }: { startHour: string }) {
 
   useEffect(() => {
     const map = main?.getMap()
-    if (map?.getLayer(HEAT_LAYER_ID)) map.setPaintProperty(HEAT_LAYER_ID, 'heatmap-weight', heatWeight(hour))
+    if (!map?.getLayer(HEAT_LAYER_ID)) return
+    map.setPaintProperty(HEAT_LAYER_ID, 'fill-color', heatColor(hour))
+    map.setPaintProperty(HEAT_LAYER_ID, 'fill-opacity', heatOpacity(hour))
   }, [main, hour])
 
   useEffect(() => {
