@@ -28,6 +28,8 @@ type Props = {
   children?: ReactNode
 }
 
+type OpenPopup = { routes: Route[]; checkpoint: CheckpointFeatureProps }
+
 const levelColor = [
   'match',
   ['get', 'level'],
@@ -39,14 +41,13 @@ export function RouteMap({ routes, selectedId, onSelect, bottomInset = 0, childr
   const mapRef = useRef<MapRef>(null)
   const { mode, systemMode } = useColorScheme()
   const dark = (mode === 'system' ? systemMode : mode) === 'dark'
-  const [popup, setPopup] = useState<CheckpointFeatureProps | null>(null)
+  const [popup, setPopup] = useState<OpenPopup | null>(null)
   const [cursor, setCursor] = useState('')
 
   const routeData = useMemo(() => routesToGeoJSON(routes), [routes])
   const checkpointData = useMemo(() => checkpointsToGeoJSON(routes), [routes])
 
   useEffect(() => {
-    setPopup(null)
     if (!routes.length) return
     const bounds = new LngLatBounds()
     for (const route of routes) {
@@ -63,7 +64,7 @@ export function RouteMap({ routes, selectedId, onSelect, bottomInset = 0, childr
     if (!feature) return
     if (feature.layer.id === 'checkpoints') {
       const props = feature.properties as CheckpointFeatureProps
-      setPopup(props)
+      setPopup({ routes, checkpoint: props })
       onSelect(props.routeId)
     } else {
       onSelect(feature.properties.id as number)
@@ -128,7 +129,9 @@ export function RouteMap({ routes, selectedId, onSelect, bottomInset = 0, childr
           }}
         />
       </Source>
-      {popup && <CheckpointPopup checkpoint={popup} onClose={() => setPopup(null)} />}
+      {popup?.routes === routes && popup.checkpoint.routeId === selectedId && (
+        <CheckpointPopup checkpoint={popup.checkpoint} onClose={() => setPopup(null)} />
+      )}
     </Map>
   )
 }

@@ -1,5 +1,6 @@
 from datetime import UTC, datetime, timedelta
 
+import httpx
 import pytest
 
 from routing.clients import http, osrm, tomtom
@@ -163,3 +164,11 @@ def test_osrm_without_routes_is_no_route(monkeypatch):
     monkeypatch.setattr(http, "request_json", lambda *a, **k: {"routes": []})
     with pytest.raises(http.NoRouteError):
         osrm.fetch_routes(A, B)
+
+
+def test_rate_limit_is_busy_error(monkeypatch):
+    monkeypatch.setattr("httpx.Client.request", lambda *a, **k: httpx.Response(429))
+    with pytest.raises(http.BusyError) as exc:
+        http.request_json("GET", "https://example.test")
+    assert exc.value.status_code == 503
+    assert "1 minute" in str(exc.value.detail)

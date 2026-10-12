@@ -15,6 +15,12 @@ class UpstreamError(APIException):
     default_code = "upstream_error"
 
 
+class BusyError(UpstreamError):
+    status_code = 503
+    default_detail = "A weather or map service is busy. Try again in 1 minute."
+    default_code = "busy"
+
+
 class NoRouteError(APIException):
     status_code = 400
     default_detail = "No road route connects these places."
@@ -34,6 +40,8 @@ def request_json(
         raise UpstreamError() from exc
     if response.status_code == 400:
         raise bad_request_error()
+    if response.status_code == 429:
+        raise BusyError()
     if response.is_error:
         raise UpstreamError()
     return response.json()

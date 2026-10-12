@@ -120,7 +120,7 @@ The first route is recommended. Each card names the key that decided its place. 
 
 - The TomTom free tier has 20,000 routing requests per month. When TomTom is not available, the app uses OSRM car routes, which ignore truck rules.
 - OSRM, Photon, Open-Meteo, and OpenFreeMap are public services with rate limits.
-- Open-Meteo's free tier allows 600 location calls per minute and 5,000 per hour. One plan uses at most 500 weather cells: long trips drop the side corridor and keep the cells along each route.
+- Open-Meteo's free tier allows 600 location calls per minute and 5,000 per hour. One plan uses at most 500 weather cells: long trips drop the side corridor and keep the cells along each route. If a service returns 429, the app says "busy, try again in 1 minute" (HTTP 503).
 - The forecast covers 48 h. Later checkpoints are No Data.
 - The weather grid is about 17 mi, so very local weather can be missed.
 - The empty truck weight (35,000 lb) is a fixed value.
