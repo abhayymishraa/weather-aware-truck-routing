@@ -2,7 +2,7 @@
 
 Plan a truck trip, get up to 3 routes, and see the weather risk at the time the truck reaches each point. The app recommends the safest route and shows a 0–48 h corridor risk map.
 
-Live demo: not deployed yet (see [Deploy](#deploy)).
+Live demo: **https://truckroute.abhayymishraa.com** (API: https://api.truckroute.abhayymishraa.com/api/health)
 
 | Desktop | Mobile |
 |---|---|
@@ -127,7 +127,11 @@ The first route is recommended. Each card names the key that decided its place. 
 
 ## Deploy
 
-The app runs on one VM with Docker Compose: `backend` (gunicorn), `redis`, and `web` (Caddy serves the frontend build, proxies `/api`, and gets the HTTPS certificate).
+Live setup:
+- **Frontend on Vercel** at `truckroute.abhayymishraa.com`. `frontend/vercel.json` rewrites `/api/*` to the API domain, so the browser stays on one origin and needs no CORS.
+- **API on an Oracle Cloud Always Free VM** (E2.1.Micro, 1 GB RAM + 2 GB swap) at `api.truckroute.abhayymishraa.com`, with Docker Compose: `backend` (gunicorn), `redis`, and `web` (Caddy proxies `/api` and gets the HTTPS certificate).
+
+The Compose stack also serves the frontend build, so one VM alone can run the whole app.
 
 On an Oracle Cloud VM (Ubuntu):
 1. Add ingress rules for TCP 80 and 443 to the VCN security list.
@@ -137,5 +141,7 @@ On an Oracle Cloud VM (Ubuntu):
    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
    sudo netfilter-persistent save
    ```
-3. Install Docker, clone the repo, and create `.env` from `.env.example`. With no domain, use `<public-ip>.sslip.io` for `SITE_ADDRESS` and `DJANGO_ALLOWED_HOSTS`.
+3. Install Docker, clone the repo, and create `.env` from `.env.example`. With no domain, use `<public-ip>.sslip.io` for `SITE_ADDRESS` and `DJANGO_ALLOWED_HOSTS`. On a 1 GB VM, add swap before the build.
 4. Run `docker compose up --build -d`, then check `curl -s https://<domain>/api/health`.
+
+Frontend on Vercel: set the API domain in `frontend/vercel.json`, then run `vercel deploy --prod` in `frontend/` and point the domain's CNAME to `cname.vercel-dns.com`.
